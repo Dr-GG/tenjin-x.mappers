@@ -1,0 +1,7 @@
+{
+  "dotnet_version": "10.0.x",
+  "solution_path": "src/.net/TenjinX.Mappers.slnx",
+  "sonarcloud_project_key": "Dr-GG_tenjin-x.mappers",
+  "sonarcloud_organization": "dr-gg"
+}
+

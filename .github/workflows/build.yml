@@ -1,0 +1,56 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read parameters
+        id: params
+        run: |
+          echo "dotnet_version=$(jq -r .dotnet_version .github/parameters.json)" >> $GITHUB_OUTPUT
+          echo "solution_path=$(jq -r .solution_path .github/parameters.json)" >> $GITHUB_OUTPUT
+          echo "sonarcloud_project_key=$(jq -r .sonarcloud_project_key .github/parameters.json)" >> $GITHUB_OUTPUT
+          echo "sonarcloud_organization=$(jq -r .sonarcloud_organization .github/parameters.json)" >> $GITHUB_OUTPUT
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ steps.params.outputs.dotnet_version }}
+
+      - name: Install .NET Coverage
+        run: dotnet tool install --global dotnet-coverage
+
+      - name: Install SonarCloud Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: SonarCloud Scan Begin
+        run: |
+          dotnet-sonarscanner begin \
+            /k:"${{ steps.params.outputs.sonarcloud_project_key }}" \
+            /o:"${{ steps.params.outputs.sonarcloud_organization }}" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+
+      - name: Restore
+        run: dotnet restore ${{ steps.params.outputs.solution_path }}
+
+      - name: Build
+        run: dotnet build ${{ steps.params.outputs.solution_path }} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet-coverage collect "dotnet test ${{ steps.params.outputs.solution_path }}" -f xml -o "coverage.xml"
+
+      - name: SonarCloud Scan End
+        run: dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/01 - Core/">
+    <Project Path="TenjinX.Mappers/TenjinX.Mappers.csproj" Id="3f8ba3b3-448c-47c0-8cde-fceb63dc2b49" />
+  </Folder>
+  <Folder Name="/02 - Moq/">
+    <Project Path="TenjinX.Mappers.Moq/TenjinX.Mappers.Moq.csproj" Id="e3c3b1e8-6a0c-47e3-95c4-230412bd44e4" />
+  </Folder>
+  <Folder Name="/03 - Tests/">
+    <Project Path="TenjinX.Mappers.Moq.Tests/TenjinX.Mappers.Moq.Tests.csproj" Id="2663d1dc-a414-4865-beda-2b0bb49fa295" />
+    <Project Path="TenjinX.Mappers.Tests/TenjinX.Mappers.Tests.csproj" Id="35dec8b7-aee7-4d54-b13b-6b1fbd6776a6" />
+  </Folder>
+</Solution>
